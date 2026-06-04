@@ -89,11 +89,38 @@
             box-shadow: 0 0 0 3px rgba(99,180,255,0.15);
         }
 
-        input[type="file"] {
-            padding: 14px;
-            font-size: 18px;
-            border: 2px dashed #63b4ff;
-            background: #f8fcff;
+        .btn-group{
+            display:flex;
+            gap:12px;
+            margin-bottom:12px;
+        }
+        .pick-btn{
+            flex:1;
+            padding:16px;
+            font-size:19px;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            color:#fff;
+            font-weight:bold;
+        }
+        .album{
+            background:#529cff;
+        }
+        .camera{
+            background:#28c870;
+        }
+        /*图片预览*/
+        .preview-box{
+            margin-top:12px;
+            border:2px dashed #99ccff;
+            border-radius:14px;
+            padding:10px;
+            display:none;
+        }
+        .preview-box img{
+            width:100%;
+            border-radius:8px;
         }
 
         .submit-btn {
@@ -185,6 +212,10 @@
             color: #666;
             padding: 40px 0;
         }
+        /*隐藏原生input*/
+        .hide-input{
+            display:none;
+        }
     </style>
 </head>
 
@@ -231,7 +262,17 @@
 
             <div class="form-item">
                 <label>4. 上传海报照片</label>
-                <input type="file" id="imageUpload" accept="image/*">
+                <div class="btn-group">
+                    <button class="pick-btn album" onclick="albumClick()">📁 从相册选取</button>
+                    <button class="pick-btn camera" onclick="cameraClick()">📷 立即拍照</button>
+                </div>
+                <!--隐藏两个原生上传框-->
+                <input class="hide-input" id="fileAlbum" type="file" accept="image/*">
+                <input class="hide-input" id="fileCamera" type="file" accept="image/*" capture="environment">
+                <!--预览区域-->
+                <div class="preview-box" id="previewWrap">
+                    <img id="previewImg">
+                </div>
             </div>
 
             <button class="submit-btn" onclick="goSubmit()">✅ 我要提交！</button>
@@ -247,6 +288,43 @@
     </div>
 
     <script>
+        //全局保存选中图片文件
+        let selectFile = null;
+        const previewWrap = document.getElementById('previewWrap');
+        const previewImg = document.getElementById('previewImg');
+        const fileAlbum = document.getElementById('fileAlbum');
+        const fileCamera = document.getElementById('fileCamera');
+
+        //相册按钮点击
+        function albumClick(){
+            fileAlbum.click();
+        }
+        //拍照按钮点击（capture=environment调用后置摄像头）
+        function cameraClick(){
+            fileCamera.click();
+        }
+
+        //监听相册文件变化
+        fileAlbum.onchange = function(e){
+            setPreview(e.target.files[0])
+        }
+        //监听拍照文件变化
+        fileCamera.onchange = function(e){
+            setPreview(e.target.files[0])
+        }
+
+        //生成预览图
+        function setPreview(file){
+            if(!file) return;
+            selectFile = file;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = res=>{
+                previewImg.src = res.target.result;
+                previewWrap.style.display = 'block';
+            }
+        }
+
         // 切换面板
         const studentBtn = document.getElementById('studentBtn');
         const teacherBtn = document.getElementById('teacherBtn');
@@ -273,7 +351,7 @@
             const name = document.getElementById('name').value;
             const createType = document.getElementById('createType').value;
             const topic = document.getElementById('topic').value.trim();
-            const file = document.getElementById('imageUpload').files[0];
+            const file = selectFile;
 
             if (!name || !createType || !topic || !file) {
                 alert('小朋友，要把每一项都填完并上传图片哦！');
@@ -301,7 +379,10 @@
                 document.getElementById('name').value = '';
                 document.getElementById('createType').value = '';
                 document.getElementById('topic').value = '';
-                document.getElementById('imageUpload').value = '';
+                selectFile = null;
+                previewWrap.style.display = 'none';
+                fileAlbum.value = '';
+                fileCamera.value = '';
             }
         }
 
