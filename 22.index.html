@@ -74,7 +74,7 @@
             margin-bottom: 10px;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 18px;
             font-size: 20px;
@@ -84,7 +84,7 @@
             transition: 0.2s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #63b4ff;
             box-shadow: 0 0 0 3px rgba(99,180,255,0.15);
         }
@@ -201,16 +201,36 @@
         <div id="studentPanel">
             <div class="form-item">
                 <label>1. 你的小组</label>
-                <input type="text" id="name" placeholder="例如：第一组">
+                <select id="name">
+                    <option value="">请选择小组</option>
+                    <option value="第一组">第一组</option>
+                    <option value="第二组">第二组</option>
+                    <option value="第三组">第三组</option>
+                    <option value="第四组">第四组</option>
+                    <option value="第五组">第五组</option>
+                    <option value="第六组">第六组</option>
+                    <option value="第七组">第七组</option>
+                    <option value="第八组">第八组</option>
+                </select>
             </div>
 
             <div class="form-item">
-                <label>2. 科普主题</label>
+                <label>2. 创作方式</label>
+                <select id="createType">
+                    <option value="">请选择创作方式</option>
+                    <option value="手绘创作">手绘创作</option>
+                    <option value="AI创作">AI创作</option>
+                    <option value="手绘+AI辅助创作">手绘+AI辅助创作</option>
+                </select>
+            </div>
+
+            <div class="form-item">
+                <label>3. 科普主题</label>
                 <input type="text" id="topic" placeholder="例如：太空、动物、天气、植物">
             </div>
 
             <div class="form-item">
-                <label>3. 上传海报照片</label>
+                <label>4. 上传海报照片</label>
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
 
@@ -248,13 +268,14 @@
             loadData();
         }
 
-        // 提交函数（绝对可用）
+        // 提交函数
         function goSubmit() {
-            const name = document.getElementById('name').value.trim();
+            const name = document.getElementById('name').value;
+            const createType = document.getElementById('createType').value;
             const topic = document.getElementById('topic').value.trim();
             const file = document.getElementById('imageUpload').files[0];
 
-            if (!name || !topic || !file) {
+            if (!name || !createType || !topic || !file) {
                 alert('小朋友，要把每一项都填完并上传图片哦！');
                 return;
             }
@@ -264,6 +285,7 @@
             reader.onload = function() {
                 const data = {
                     name,
+                    createType,
                     topic,
                     img: this.result,
                     time: new Date().toLocaleString()
@@ -277,6 +299,7 @@
                 
                 // 清空表单
                 document.getElementById('name').value = '';
+                document.getElementById('createType').value = '';
                 document.getElementById('topic').value = '';
                 document.getElementById('imageUpload').value = '';
             }
@@ -298,6 +321,7 @@
                 <div class="card">
                     <p style="font-weight:bold; color:#3a9dff;">第 ${i+1} 个作品 | ${item.time}</p>
                     <p>🧑 小组：${item.name}</p>
+                    <p>🎨 创作方式：${item.createType}</p>
                     <p>📖 主题：${item.topic}</p>
                     <p>🖼️ 海报：</p>
                     <img src="${item.img}">
