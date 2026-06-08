@@ -320,7 +320,8 @@
                     <option value="">请选择小组</option>
                     <option>第一组</option><option>第二组</option><option>第三组</option>
                     <option>第四组</option><option>第五组</option><option>第六组</option>
-                    <option>第七组</option><option>第八组</option>
+                    <option>第七组</option><option>第八组</option><option>第九组</option>
+                    <option>第十组</option><option>第十一组</option>
                 </select>
             </div>
 
@@ -415,8 +416,8 @@
             var file = this.files[0];
             if (!file) return;
 
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('图片太大，不能超过5MB', 'error');
+            if (file.size > 7 * 1024 * 1024) {
+                showToast('图片太大，不能超过7MB', 'error');
                 this.value = '';
                 return;
             }
